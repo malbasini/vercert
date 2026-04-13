@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:fragment="content(tenantId)">
+<head>
+  <meta charset="utf-8">
+  <title>Dettaglio fattura</title>
+</head>
+<body class="bg-light">
+<div class="container my-4" style="max-width: 980px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Dettaglio fattura</h1>
+      <div class="text-muted small">ID: <span id="invoiceId" th:text="${invoiceId}"></span></div>
+    </div>
+    <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="/invoices"><i class="bi bi-arrow-return-left"></i> Torna alla Lista</a>
+    <th:block th:if="${invoice.getStatus?.name()=='DRAFT'}">
+      <a class="js-del btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" th:data-invoice-id="${invoice.getId()}">
+        <i class="bi bi-trash"></i> Elimina
+      </a>
+    </th:block>
+  </div>
+  </div>
+  <br>
+  <h2 style="text-align: center;">Dati testata fattura</h2>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between flex-wrap gap-2">
+        <span class="badge"
+              th:classappend="${invoice.getStatus().name() =='DRAFT'} ? ' text-bg-secondary' : ' text-bg-success'"
+              th:text="${invoice.getStatus()}">ISSUED</span>
+        <small class="text-muted">
+          Seriale: <span th:text="${invoice.serial}">ABC123</span>
+        </small>
+      </div>
+      <small class="text-muted">
+        Tenant: <span th:text="${currentTenant}">demo</span>
+      </small>
+      <hr/>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input class="form-control" readonly th:value="${invoice.numberDisplay}">
+            <label>Numero</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${#temporals.format(invoice.issuedAt,'dd/MM/yyyy HH:mm')}">
+            <label>Emessa il</label>
+          </div>
+        </div>
+        <hr>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerName}">
+            <label>Nome cliente</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerEmail}">
+            <label>Email cliente</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerVat}">
+            <label>P.IVA / CF</label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerAddressLine1}">
+            <label>Indirizzo riga 1</label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerAddressLine2}">
+            <label>Indirizzo riga 2</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerCity}">
+            <label>Città</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerProvince}">
+            <label>Provincia</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerPostalCode}">
+            <label>CAP</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerCountry}">
+            <label>Stato</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerPec}">
+            <label>PEC</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly th:value="${invoice.publicCode}">
+            <label>Public code</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.pdfUrl}">
+            <label>PDF</label>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-floating">
+            <input class="form-control" readonly  th:value="${invoice.customerSdi}">
+            <label>SDI</label>
+          </div>
+        </div>
+      </div>
+        <hr>
+        <div class="col-md-6 text-end" style="text-align: left !important;">
+          <div class="text-muted small">Totale</div>
+          <div class="fs-4 fw-semibold" id="gross">-</div>
+        </div>
+      </div>
+    <br>
+    <h2 style="text-align: center;">Dati righe fattura</h2>
+    <br>
+      <hr class="my-4">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+          <tr>
+            <th>Descrizione</th>
+            <th class="text-end">Qtà</th>
+            <th class="text-end">Prezzo</th>
+            <th class="text-end">Totale riga</th>
+          </tr>
+          </thead>
+          <tbody id="lines"></tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex gap-2">
+          <a id="btnEdit" style="margin-bottom: 20px;margin-left: 20px;" class="btn btn-outline-secondary d-none" th:href="@{/invoices/{id}/edit(id=${invoiceId})}"><i class="bi bi-pen"></i>&nbsp;Modifica</a>
+          <button id="btnIssue" style="margin-bottom: 20px;" class="btn btn-success d-none" type="button"><i class="bi bi-receipt"></i>&nbsp;Emetti</button>
+        </div>
+        <div class="d-flex gap-2">
+          <a id="btnPdf" style="margin-bottom: 20px;margin-right: 20px;" class="btn btn-outline-primary d-none" target="_blank"><i class="bi bi-file-pdf-fill"></i>&nbsp;Scarica PDF</a>
+        </div>
+      </div>
+    </div>
+        <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content center">
+              <div class="modal-header">
+                <h5 class="modal-title">Conferma eliminazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div class="modal-body">
+                Eliminando la bozza verranno rimosse le righe nel database. L'operazione è irreversibile. Continuare?
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Elimina</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+<script th:inline="javascript">
+  const invoiceId = [[${invoiceId}]];
+</script>
+<script>
+  const euro = (minor) => ((minor||0)/100).toFixed(2).replace(".", ",") + " €";
+  async function load() {
+    const res = await fetch(`/api/invoices/${invoiceId}`, { headers: {"Accept":"application/json"}});
+    const data = await res.json();
+    if (!res.ok) {
+      showToast?.(`Errore: ${data.message || res.statusText}`, { colorClass: "bg-danger" });
+      return;
+    }
+    document.getElementById("gross").textContent = euro(data.grossTotalMinor);
+    const tbody = document.getElementById("lines");
+    tbody.innerHTML = (data.lines || []).map(l => `
+    <tr>
+      <td>${l.description || ""}</td>
+      <td class="text-end">${l.qty || 1}</td>
+      <td class="text-end">${euro(l.unitPriceMinor || 0)}</td>
+      <td class="text-end fw-semibold">${euro(l.grossMinor || 0)}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="4" class="text-muted">Nessuna riga</td></tr>`;
+
+    const btnEdit = document.getElementById("btnEdit");
+    const btnIssue = document.getElementById("btnIssue");
+    const btnPdf = document.getElementById("btnPdf");
+
+    if (data.status === "DRAFT") {
+      btnEdit.classList.remove("d-none");
+      btnIssue.classList.remove("d-none");
+      btnPdf.classList.add("d-none");
+    } else {
+      btnEdit.classList.add("d-none");
+      btnIssue.classList.add("d-none");
+      btnPdf.classList.remove("d-none");
+      btnPdf.href = `/api/invoices/${invoiceId}/pdf`;
+    }
+
+    btnIssue.onclick = async () => {
+      const r = await fetch(`/api/invoices/${invoiceId}/issue`, { method: "POST", headers: {"Accept":"application/json"}});
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        showToast?.(`Errore emissione: ${d.message || r.statusText}`, { colorClass: "bg-danger" });
+        return;
+      }
+      sessionStorage.setItem("flashMsg", JSON.stringify({ text: "Fattura emessa ✅", cls: "bg-success" }));
+      window.location.reload();
+    };
+  }
+  load();
+</script>
+<script>
+  const modalEl = document.getElementById('deleteInvoiceModal');
+  const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+  modalEl.addEventListener('show.bs.modal', (event) => {
+    const trigger = event.relatedTarget; // bottone che ha aperto la modale
+    const invoiceId = trigger.getAttribute('data-invoice-id');
+    // salva l'id sul bottone di conferma (o sulla modale)
+    confirmBtn.dataset.invoice = invoiceId;
+  });
+
+  confirmBtn.addEventListener('click', async () => {
+    const id = document.getElementById("invoiceId").textContent;
+    if (!id) return;
+    const resp = await fetch(`/api/invoices/${encodeURIComponent(id)}/delete`, { method: 'DELETE' });
+    const data = await resp.json();
+    if (resp.ok) {
+      // chiudi modale e aggiorna pagina/lista
+      hideModal()
+      sessionStorage.setItem("flashMsg", JSON.stringify({ text: "Certificato eliminato con successo", cls: "bg-success" }));
+      location.href=`/invoices`;
+    } else {
+      // gestisci errore
+      sessionStorage.setItem("flashMsg", JSON.stringify({ text: data?.message + ` Status HTTP ${resp.status}`, cls: "bg-danger" }));
+      return;
+    }
+
+    function hideModal() {
+      const instance = bootstrap.Modal.getOrCreateInstance(modalEl);
+      instance.hide();
+    }
+  });
+
+</script>
+<script>
+  // all'avvio pagina (es. in uno script al fondo pagina):
+  const flash = sessionStorage.getItem("flashMsg");
+  if (flash) {
+    const { text, cls } = JSON.parse(flash);
+    showToast(text, { colorClass: cls });
+    sessionStorage.removeItem("flashMsg");
+  }
+</script>
+</body>
+</html>

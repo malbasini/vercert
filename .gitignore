@@ -1,0 +1,12 @@
+.idea
+.mvn
+certificate
+keys
+logs
+storage
+target
+/src/main/resources/application.properties
+/src/main/resources/application.yaml
+/src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
+myenv.env
