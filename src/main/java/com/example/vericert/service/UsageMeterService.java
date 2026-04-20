@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.List;
 
 @Service
@@ -95,7 +94,9 @@ public class UsageMeterService {
         if (currentCycle.equals("MONTHLY")) {
             daysBack = 30;
         }
-        LocalDate to = LocalDate.now();
+        Instant instant = ts.getCurrentPeriodEnd();
+        // Con fuso orario specifico
+        LocalDate to = instant.atZone(ZoneId.of("Europe/Rome")).toLocalDate();
         LocalDate from = to.minusDays(daysBack);
         this.updateDaysBack(tenantId);
         return usageMeterRepository.getUsageHistoryForTenant(tenantId, from, to);
