@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
 <body class="bg-light">
-
+<input type="hidden" id="tenantId" th:value="${tenantId}"/>
 <div class="container py-4">
 
     <!-- Titolo -->
@@ -162,6 +162,12 @@
                             MB di storage
                         </li>
                     </ul>
+                    <th:block th:if="${plan.code == 'FREE'}">
+                        <div class="mt-auto d-grid gap-2">
+                            <button onclick="activationFree()" class="btn btn-outline-secondary btn-sm mt-2">Rinnova ora</button>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${plan.code != 'FREE'}">
                             <form th:action="@{/billing/checkout}" method="post">
                             <!-- Form checkout -->
                             <div>
@@ -191,10 +197,31 @@
                     </div>
                 </div>
                </form>
+               </th:block>
             </div>
         </div>
       </div>
     </div>
 </div>
 </body>
+<script>
+  async function activationFree(){
+    const tenantId = document.getElementById('tenantId').value;
+    alert(tenantId);
+    const response = await fetch(`/api/payments/renew-free`,{
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tenantId: tenantId })
+    });
+    if (!response.ok) {
+    if (response.status === 403) {
+    let msg = 'Non hai i permessi per completare questa operazione.';
+    showToast(msg, {colorClass: 'bg-danger', autohide: false});
+    return;
+    }
+  }   else {
+    showToast("Rinnovo avvenuto con successo", {colorClass: 'bg-success'});
+  }
+}
+</script>
 </html>

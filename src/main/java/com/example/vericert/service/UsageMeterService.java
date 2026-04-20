@@ -84,7 +84,7 @@ public class UsageMeterService {
         this.updateDaysBack(tenantId);
         usageMeterRepository.save(m);
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public List<DailyUsageDTO> getUsageHistoryForTenant(Long tenantId) {
         int daysBack = 7;
         TenantSettings ts = tenantSettingsRepository.findById(tenantId).orElseThrow();

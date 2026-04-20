@@ -82,6 +82,7 @@ public class BillingController {
         List<PlanDefinition> plans = planRepo.findAll();
         model.addAttribute("currentPlan", currentPlan);
         model.addAttribute("plans", plans);
+        model.addAttribute("tenantId",tenantId);
         return "billing/plans";  // es: templates/billing/plans.html
     }
 

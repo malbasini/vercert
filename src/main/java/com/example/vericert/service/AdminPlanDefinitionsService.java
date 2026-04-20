@@ -68,5 +68,34 @@ public class AdminPlanDefinitionsService {
         t.setPlan(Plan.valueOf(planCode));
         tenantRepo.save(t);
     }
+    @Transactional
+    public void renewPlan(Long tenantId, String planCode, String cycle, String checkoutSessionId, String pspRef) {
+        PlanDefinition plan = repo.findByCode(planCode).orElseThrow();
+        Instant start = Instant.now();
+        ZonedDateTime zdt = start.atZone(ZONE);
+        TenantSettings ts = tenantSettingsRepo.findById(tenantId).orElseGet(() -> {TenantSettings
+                t = new TenantSettings(); t.setTenantId(tenantId);return t;
+        });
+        ZonedDateTime end = switch (cycle) {
+            case "ANNUAL"  -> zdt.plusYears(1);
+            default        -> zdt.plusMonths(1);
+        };
+        ts.setPlanCode(planCode);
+        ts.setBillingCycle(cycle);
+        ts.setCurrentPeriodStart(zdt.toInstant());
+        ts.setCurrentPeriodEnd(end.toInstant());
+        ts.setCertsPerMonth(plan.getCertsPerMonth());
+        ts.setApiCallPerMonth(plan.getApiCallsPerMonth());
+        ts.setStorageMb(BigDecimal.valueOf(plan.getStorageMb()));
+        ts.setSupport(plan.isSupportPriority());
+        ts.setProvider(pspRef);
+        ts.setCheckoutSessionId(checkoutSessionId);
+        ts.setStatus("ACTIVE");
+        ts.setUpdatedAt(Instant.now());
+        tenantSettingsRepo.save(ts);
+        Tenant t = tenantRepo.findById(tenantId).orElseThrow();
+        t.setPlan(Plan.valueOf(planCode));
+        tenantRepo.save(t);
+    }
 }
 

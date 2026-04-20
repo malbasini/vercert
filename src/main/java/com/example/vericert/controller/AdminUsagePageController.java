@@ -26,7 +26,6 @@ public class AdminUsagePageController {
     @GetMapping("/detail/{tenantId}")
     public String usageDetail(@PathVariable Long tenantId, Model model)
     {
-        // ultimi 7 giorni, incluso oggi
         List<DailyUsageDTO> history7days = usageMeterService.getUsageHistoryForTenant(tenantId);
         if (!history7days.isEmpty()) {
             model.addAttribute("days",history7days.getFirst().getDaysBack());

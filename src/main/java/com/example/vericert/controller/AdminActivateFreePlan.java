@@ -2,6 +2,7 @@ package com.example.vericert.controller;
 
 
 import com.example.vericert.service.AdminPlanDefinitionsService;
+import com.example.vericert.service.PlanUsageResetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +16,14 @@ import java.util.Map;
 public class AdminActivateFreePlan {
 
     private final AdminPlanDefinitionsService service;
-    public AdminActivateFreePlan(AdminPlanDefinitionsService service){
+    private final PlanUsageResetService planUsageResetService;
+
+
+    public AdminActivateFreePlan(AdminPlanDefinitionsService service,
+                                 PlanUsageResetService planUsageResetService){
+
         this.service = service;
+        this.planUsageResetService = planUsageResetService;
     }
 
 
@@ -25,6 +32,18 @@ public class AdminActivateFreePlan {
     {
         try {
             service.activatePlan(request.tenantId, "FREE", "MONTHLY", "FREE-" + request.tenantId, "FREE");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+        }
+        return ResponseEntity.ok(Map.of("ok", true));
+    }
+    @PostMapping("/api/payments/renew-free")
+    public ResponseEntity<?> renewFree(@RequestBody activationRequest request)
+    {
+        try {
+            service.activatePlan(request.tenantId, "FREE", "MONTHLY", "FREE-" + request.tenantId, "FREE");
+            planUsageResetService.resetUsageForNewPeriod(request.tenantId);
         }
         catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
