@@ -35,7 +35,8 @@ public interface UsageMeterRepository extends JpaRepository<UsageMeter, UsageMet
             u.certsGenerated,
             u.apiCalls,
             u.pdfStorageMb,
-            u.verificationsCount
+            u.verificationsCount,
+            u.daysBack
         )
         FROM UsageMeter u
         WHERE u.id.tenantId = :tenantId
@@ -55,7 +56,8 @@ public interface UsageMeterRepository extends JpaRepository<UsageMeter, UsageMet
             u.certsGenerated,
             u.apiCalls,
             u.pdfStorageMb,
-            u.verificationsCount
+            u.verificationsCount,
+            u.daysBack
         )
         FROM UsageMeter u
         WHERE u.id.usageDay = :day
@@ -133,4 +135,15 @@ public interface UsageMeterRepository extends JpaRepository<UsageMeter, UsageMet
             @Param("fromDay") LocalDate fromDay,
             @Param("toDay") LocalDate toDay
     );
+
+    @Modifying
+    @Query("""
+           update UsageMeter u
+              set   u.daysBack             = :daysBack
+              where u.id.tenantId          = :tenantId
+           """)
+
+    void updateDaysBack(@Param("tenantId") Long tenantId,
+                       @Param("daysBack") Integer daysBack);
+
 }

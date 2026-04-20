@@ -30,11 +30,10 @@
                             <td colspan="6" class="text-center text-muted py-4">
                                 Nessun consumo registrato oggi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="btn btn-outline-success btn-sm"
                                                                      th:href="@{'/admin/usage/detail/' + ${tenantId}}">
-                                                                     <i class="bi bi-7-square"></i>&nbsp; Dettaglio 7 giorni precedenti
+                                <i class="bi bi-bar-chart-fill"></i>&nbsp;Dettaglio periodo precedente
                                                                      </a>
                             </td>
                         </tr>
-
                         <tr th:each="row : ${todayStatus}">
                             <td>
                                 <span class="fw-semibold" th:text="${row.tenantId}">12</span>

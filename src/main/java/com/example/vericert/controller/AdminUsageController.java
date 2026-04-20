@@ -30,6 +30,6 @@ public class AdminUsageController {
     @GetMapping("/{tenantId}")
     public List<DailyUsageDTO> getTenantHistory(@PathVariable Long tenantId) {
         // ultimi 7 giorni, incluso oggi
-        return usageMeterService.getUsageHistoryForTenant(tenantId, 7);
+        return usageMeterService.getUsageHistoryForTenant(tenantId);
     }
 }

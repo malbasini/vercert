@@ -3,26 +3,30 @@ package com.example.vericert.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
 public class DailyUsageDTO {
     private final Long tenantId;
     private final LocalDate day;
     private final Integer certsGenerated;
     private final Integer apiCalls;
-    private final BigDecimal pdfStorageMb;
-    private final Integer verificationsCount;   // NEW
+    public final BigDecimal pdfStorageMb;
+    private final Integer verificationsCount;
+    private final Integer daysBack; // NEW
 
     public DailyUsageDTO(Long tenantId,
                          LocalDate day,
                          Integer certsGenerated,
                          Integer apiCalls,
                          BigDecimal pdfStorageMb,
-                         Integer verificationsCount) {
+                         Integer verificationsCount,
+                         Integer daysBack) {
         this.tenantId = tenantId;
         this.day = day;
         this.certsGenerated = certsGenerated;
         this.apiCalls = apiCalls;
         this.pdfStorageMb = pdfStorageMb;
         this.verificationsCount = verificationsCount;
+        this.daysBack = daysBack;
     }
 
     public Long getTenantId() {
@@ -48,4 +52,9 @@ public class DailyUsageDTO {
     public Integer getVerificationsCount() {
         return verificationsCount;
     }
+
+    public Integer getDaysBack() {
+        return daysBack;
+    }
+
 }

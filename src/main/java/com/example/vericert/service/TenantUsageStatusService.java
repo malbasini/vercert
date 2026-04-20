@@ -46,7 +46,7 @@ public class TenantUsageStatusService {
 
             TenantSettings settings = tenantSettingsRepository.findByTenantId(tenantId).orElseThrow();
 
-            BigDecimal used = usage.getPdfStorageMb() != null
+            BigDecimal used = usage.getPdfStorageMb()!= null
                     ? usage.getPdfStorageMb()
                     : BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 

@@ -32,6 +32,10 @@ public class UsageMeter {
     @Column(name = "verifications_count", nullable = false)
     private Integer verificationsCount = 0;
 
+    @Column(name = "days_back")
+    private Integer daysBack = 0;
+
+
     public UsageMeter() {}
 
     public UsageMeter(UsageMeterKey id) {
@@ -84,5 +88,12 @@ public class UsageMeter {
 
     public void setVerificationsCount(Integer verificationsCount) {
         this.verificationsCount = verificationsCount;
+    }
+
+    public Integer getDaysBack() {
+        return daysBack;
+    }
+    public void setDaysBack(Integer daysBack) {
+        this.daysBack = daysBack;
     }
 }

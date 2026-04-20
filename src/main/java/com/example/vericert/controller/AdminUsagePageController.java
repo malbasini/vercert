@@ -27,7 +27,14 @@ public class AdminUsagePageController {
     public String usageDetail(@PathVariable Long tenantId, Model model)
     {
         // ultimi 7 giorni, incluso oggi
-        List<DailyUsageDTO> history7days = usageMeterService.getUsageHistoryForTenant(tenantId, 365);
+        List<DailyUsageDTO> history7days = usageMeterService.getUsageHistoryForTenant(tenantId);
+        if (!history7days.isEmpty()) {
+            model.addAttribute("days",history7days.getFirst().getDaysBack());
+        }
+        else
+        {
+            model.addAttribute("days", null);
+        }
         model.addAttribute("tenantId", tenantId);
         model.addAttribute("history7days", history7days);
         return "usage/usage_detail"; // creeremo questo template
