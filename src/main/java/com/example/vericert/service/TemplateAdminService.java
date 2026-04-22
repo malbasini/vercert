@@ -27,7 +27,7 @@ public class TemplateAdminService {
 
         Template t = new Template();
         t.setTenant(tenantService.ref(tenantId));
-        t.setName(req.name());
+        t.setName(req.name().trim());
         t.setVersion(req.version());
         t.setHtml(req.html());
         t.setUserVarSchema(req.variablesUserJson());

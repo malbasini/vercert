@@ -97,7 +97,10 @@ public class InvoiceService {
 
         Template tpl = templateRepo.findByTenantIdAndActiveTrue(tenantId)
                 .orElseThrow(() -> new IllegalStateException("Nessun template attivo per tenant " + tenantId));
-
+        //CONTROLLO CHE SIA ATTIVO IL TEMPLATE FATTURE.
+        if (!tpl.getName().equals("TEMPLATE FATTURE")) {
+            throw new IllegalStateException("Attivare il template fatture per tenant " + tenantId);
+        }
         if (req == null) throw new IllegalArgumentException("Richiesta nulla");
         if (req.customerName() == null || req.customerName().isBlank())
             throw new IllegalArgumentException("customerName obbligatorio");

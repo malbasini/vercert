@@ -2,10 +2,7 @@ package com.example.vericert.service;
 
 import com.example.vericert.component.TenantStorageLayout;
 import com.example.vericert.config.VericertProps;
-import com.example.vericert.domain.Certificate;
-import com.example.vericert.domain.SigningKeyEntity;
-import com.example.vericert.domain.Tenant;
-import com.example.vericert.domain.VerificationToken;
+import com.example.vericert.domain.*;
 import com.example.vericert.enumerazioni.Stato;
 import com.example.vericert.repo.CertificateRepository;
 import com.example.vericert.repo.TemplateRepository;
@@ -109,6 +106,12 @@ public class CertificateService {
             // 1) controllo piano
             planEnforcementService.checkCanIssueDocuments(tenant.getId());
             planEnforcementService.checkCanStorePdf(tenant.getId(), BigDecimal.valueOf(0));
+            Template tpl = tempRepo.findById(templateId)
+                    .orElseThrow(() -> new IllegalStateException("Nessun template attivo per tenant " + tenant.getId()));
+            //CONTROLLO CHE SIA ATTIVO IL TEMPLATE CERTIFICATI.
+            if (!tpl.getName().equals("TEMPLATE CERTIFICATI")) {
+                throw new IllegalStateException("Attivare il template certificati per tenant " + tenant.getId());
+            }
             // 1) Precondizioni/base
             String serial = UUID.randomUUID().toString().replace("-", "").substring(0, 20).toUpperCase();
             String code = randomCode(24);
