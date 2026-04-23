@@ -23,7 +23,7 @@
         <div class="input-group mb-3">
             <span class="input-group-text" id="inputGroup-sizing-sm6">Nome</span>
             <select class="form-select form-select-sm" id="name" name="name" aria-label="Small select example">
-                <option value="selected Open this select menu"></option>
+                <option value="------SELEZIONARE UN TEMPLATE--------">------SELEZIONARE UN TEMPLATE--------</option>
                 <option value="TEMPLATE FATTURE">TEMPLATE FATTURE</option>
                 <option value="TEMPLATE CERTIFICATI" selected>TEMPLATE CERTIFICATI</option>
             </select>
@@ -137,6 +137,7 @@
                         }
                         else{
                             showToast(data?.message ,{ colorClass: 'bg-danger'})
+                            return;
                         }
                     }
                     showToast('Template creato', { colorClass: 'bg-success'});

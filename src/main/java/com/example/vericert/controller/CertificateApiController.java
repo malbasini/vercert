@@ -89,6 +89,18 @@ public class CertificateApiController {
             @Valid @RequestBody CertificateDto rec,
             BindingResult br) throws IOException {
 
+        Long tenantId = currentTenantId();
+        Template tpl = templatePicker.getActiveTemplateOrThrow(tenantId);
+        try {
+            if (!tpl.getName().equals("TEMPLATE CERTIFICATI")) {
+
+                throw new IllegalStateException("Attivare il template certificati per tenant " + tenantId);
+            }
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
+        }
         try {
             int hours = Integer.parseInt(rec.hours());
         } catch (NumberFormatException e) {
@@ -115,8 +127,6 @@ public class CertificateApiController {
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
         String tenantName = user.getTenantName();
         map.put("tenantName", tenantName);
-        Long tenantId = currentTenantId();
-        Template tpl = templatePicker.getActiveTemplateOrThrow(tenantId);
         Optional<Tenant> t = tenantRepo.findByName(tenantName);
         Tenant tenant = t.orElseThrow();
             c = service.issue(tpl.getId(), map, ownerName, ownerEmail,tenant);

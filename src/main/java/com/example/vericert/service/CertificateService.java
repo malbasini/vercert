@@ -108,10 +108,6 @@ public class CertificateService {
             planEnforcementService.checkCanStorePdf(tenant.getId(), BigDecimal.valueOf(0));
             Template tpl = tempRepo.findById(templateId)
                     .orElseThrow(() -> new IllegalStateException("Nessun template attivo per tenant " + tenant.getId()));
-            //CONTROLLO CHE SIA ATTIVO IL TEMPLATE CERTIFICATI.
-            if (!tpl.getName().equals("TEMPLATE CERTIFICATI")) {
-                throw new IllegalStateException("Attivare il template certificati per tenant " + tenant.getId());
-            }
             // 1) Precondizioni/base
             String serial = UUID.randomUUID().toString().replace("-", "").substring(0, 20).toUpperCase();
             String code = randomCode(24);

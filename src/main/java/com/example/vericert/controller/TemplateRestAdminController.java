@@ -78,48 +78,57 @@ public class TemplateRestAdminController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<?> create(@Valid @RequestBody TemplateUpsert req,
                                     BindingResult br) {
-        if (br.hasErrors()) {
-            var errors = br.getFieldErrors().stream()
-                    .collect(Collectors.groupingBy(
-                            FieldError::getField,
-                            Collectors.mapping(DefaultMessageSourceResolvable::getDefaultMessage, Collectors.toList())
-                    ));
-            return ResponseEntity.badRequest().body(Map.of("message", "Validation failed", "errors", errors));
+            if (br.hasErrors()) {
+                var errors = br.getFieldErrors().stream()
+                        .collect(Collectors.groupingBy(
+                                FieldError::getField,
+                                Collectors.mapping(DefaultMessageSourceResolvable::getDefaultMessage, Collectors.toList())
+                        ));
+                return ResponseEntity.badRequest().body(Map.of("message", "Validation failed", "errors", errors));
 
-        }
+            }
+            try {
+                if (!req.name().equals("TEMPLATE CERTIFICATI") && (!req.name().equals("TEMPLATE FATTURE"))) {
+
+                    throw new IllegalStateException("Nessun template attivo");
+                }
+            }
+            catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("message", e.getMessage()));
+            }
             // 1) CAPTCHA
-        if (!captchaValidator.verifyCaptcha(req.captchaToken())) {
+            if (!captchaValidator.verifyCaptcha(req.captchaToken())) {
                 return ResponseEntity.unprocessableEntity()
                         .body(Map.of("errors", Map.of("captcha", List.of("Captcha non valido"))));
-        }
-        Template t = null;
-        try {
-            t  = service.create(req);
-            if(t.isActive())
-                service.deactivateAll(currentTenantId(),t);
+            }
+            Template t = null;
+            try {
+                t = service.create(req);
+                if (t.isActive())
+                    service.deactivateAll(currentTenantId(), t);
 
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("message", e.getMessage()));
+            }
+            return ResponseEntity.ok(new TemplateRestAdminController.VerificationInsertResponse(
+                    t.getId().toString(),
+                    t.getName(),
+                    t.getVersion(),
+                    t.isActive(),
+                    t.getTenant().getName()
+            ));
         }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", e.getMessage()));
-        }
-        return ResponseEntity.ok(new TemplateRestAdminController.VerificationInsertResponse(
-                t.getId().toString(),
-                t.getName(),
-                t.getVersion(),
-                t.isActive(),
-                t.getTenant().getName()
-        ));
-    }
     // DTO interno alla risposta
-    record VerificationInsertResponse(
-            String id,
-            String name,
-            String version,
-            boolean active,
-            String tenant
-    ) {}
-
+        record VerificationInsertResponse(
+                String id,
+                String name,
+                String version,
+                boolean active,
+                String tenant
+        ) {
+    }
     @PutMapping("/{id}/edit")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<?>  update(@PathVariable(name = "id") Long id,
