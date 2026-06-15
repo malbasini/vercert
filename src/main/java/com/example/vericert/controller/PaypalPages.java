@@ -77,13 +77,6 @@ public class PaypalPages {
     @GetMapping("success/{orderId}")
     public String success(@PathVariable String orderId,Model model) {
         Payment p = payRepo.findByProviderIntentId(orderId).orElseThrow();
-        if (!"SUCCEEDED".equalsIgnoreCase(p.getStatus())) {
-            model.addAttribute("provider", "PayPal");
-            model.addAttribute("transactionId", orderId);
-            model.addAttribute("title", "Pagamento in sospeso");
-            model.addAttribute("description", "Pagamento in sospeso.");
-            return "paypal/pending";
-        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User u = userRepo.findByUserName(username).orElseThrow();
@@ -91,36 +84,6 @@ public class PaypalPages {
         // sicurezza: utente deve appartenere al tenant del pagamento
         if (!tenantId.equals(p.getTenantId())) {
             return "error/403";
-        }
-        String to = u.getEmail();
-        // INVIO EMAIL
-        if (!p.isPurchaseEmailSentPaypal()) {
-            Map<String,Object> vars = new HashMap<>();
-            vars.put("action", "Acquisto");
-            vars.put("customer_name", u.getFullName() != null ? u.getFullName() : username);
-            vars.put("paid_at", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-                    .withZone(ZoneId.of("Europe/Rome")).format(Instant.now()));
-            vars.put("payment_ref", orderId);
-            vars.put("provider", "PayPal");
-            // importi (se p.amountMinor è lordo)
-            BigDecimal total = BigDecimal.valueOf(p.getAmountMinor(), 2);
-            BigDecimal net = total.divide(new BigDecimal("1.22"), 2, RoundingMode.HALF_UP);
-            BigDecimal vat = total.subtract(net).setScale(2, RoundingMode.HALF_UP);
-            vars.put("amount_net", formatEuroIT(String.valueOf(net)));
-            vars.put("vat_amount", formatEuroIT(String.valueOf(vat)));
-            vars.put("amount_total", formatEuroIT(String.valueOf(total)));
-            vars.put("subscription_id", (orderId != null && orderId.startsWith("I-")) ? orderId : "-");
-            // plan/cycle: prendili da tenant_settings o currentPlanView
-            CurrentPlanView currentPlan = planEnforcementService.buildCurrentPlanView(p.getTenantId());
-            vars.put("plan_name", currentPlan.getPlanCode());
-            vars.put("billing_cycle", currentPlan.getBillingCycle());
-            vars.put("portal_url", "https://app.vercert.org/");
-            vars.put("support_email", "support@app.vercert.org");
-            vars.put("company_name", "VeriCert");
-            vars.put("company_address", "…");
-            mailService.sendPurchaseSuccess(to,"Conferma pagamento - " + vars.getOrDefault("plan_name",currentPlan), vars);
-            p.setPurchaseEmailSentPaypal(true);
-            payRepo.save(p);
         }
         Instant date = tenantSettingsRepo.findByTenantId(p.getTenantId()).get().getCurrentPeriodEnd();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")

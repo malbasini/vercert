@@ -6,32 +6,52 @@ import jakarta.validation.constraints.Size;
 
 public class ContactFormDto {
 
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "Il nome è obbligatorio.")
+    @Size(max = 100)
     private String name;
 
-    @Email
-    @NotBlank
-    @Size(max = 254)
+    @NotBlank(message = "L'email è obbligatoria.")
+    @Email(message = "Inserisci un indirizzo email valido.")
+    @Size(max = 150)
     private String email;
 
-    @NotBlank
-    @Size(max = 4000)
+    @NotBlank(message = "L'oggetto è obbligatorio.")
+    @Size(max = 150)
+    private String subject;
+
+    @NotBlank(message = "Il messaggio è obbligatorio.")
+    @Size(max = 5000)
     private String message;
 
-    @Size(max = 60)
-    private String subject; // opzionale
+    public String getName() {
+        return name;
+    }
 
-    // getters/setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

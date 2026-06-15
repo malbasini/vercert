@@ -19,50 +19,35 @@
         Invia una richiesta di assistenza: riceverai risposta all’indirizzo email indicato nel form.
     </p>
 
-    <!-- Flash message -->
-    <div th:if="${flashMsg != null}"
-         class="alert"
-         th:classappend="${flashOk} ? ' alert-success' : ' alert-danger'"
-         th:text="${flashMsg}">
-    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
-    <form th:action="@{/contact}" th:object="${form}" method="post" class="card shadow-sm border-0">
-        <div class="card-body">
+    <form th:action="@{/contact}" th:object="${contactForm}" method="post" class="card shadow-sm border-0 rounded-4 p-4">
+        <div class="mb-3">
+            <label class="form-label">Nome</label>
+            <input type="text" th:field="*{name}" class="form-control">
+            <div class="text-danger small" th:errors="*{name}"></div>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nome</label>
-                <input type="text" class="form-control" th:field="*{name}" placeholder="Mario Rossi">
-                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" th:field="*{email}" class="form-control">
+            <div class="text-danger small" th:errors="*{email}"></div>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" th:field="*{email}" placeholder="mario@azienda.it">
-                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Oggetto</label>
+            <input type="text" th:field="*{subject}" class="form-control">
+            <div class="text-danger small" th:errors="*{subject}"></div>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Oggetto (opzionale)</label>
-                <input type="text" class="form-control" th:field="*{subject}" placeholder="Es. Problema emissione attestato">
-                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Messaggio</label>
-                <textarea class="form-control" rows="6" th:field="*{message}"
-                          placeholder="Descrivi il problema, includi eventuale codice/seriale e cosa succede..."></textarea>
-                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
-            </div>
-
-            <div class="d-flex gap-2 align-items-center">
-                <button class="btn btn-primary" type="submit">
-                    Invia
-                </button>
-                <div class="text-muted small">
-                    Il supporto risponde a <strong>support@vercert.org</strong>.
-                </div>
-            </div>
-
+        <div class="mb-3">
+            <label class="form-label">Messaggio</label>
+            <textarea th:field="*{message}" class="form-control" rows="6"></textarea>
+            <div class="text-danger small" th:errors="*{message}"></div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Invia richiesta</button>
         </div>
     </form>
 </main>

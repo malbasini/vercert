@@ -91,7 +91,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                // Configurazione rememberMe
+                        // Configurazione rememberMe
                         .rememberMe(rememberMe -> rememberMe
                                 .rememberMeParameter("rememberMe")
                                 .tokenValiditySeconds(2 * 24 * 60 * 60)

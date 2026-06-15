@@ -1,5 +1,7 @@
 services:
   db:
+    env_file:
+      - myenv.env
     image: mysql:8.0
     ports:
       - "127.0.0.1:3306:3306"
@@ -21,8 +23,6 @@ services:
       vericert-net:
         ipv4_address: 172.30.0.10
   app:
-    env_file:
-      - myenv.env
     build: .
     container_name: vericert-app
     healthcheck:
@@ -36,11 +36,12 @@ services:
     restart: always
     depends_on:
       - db
+    env_file:
+      - myenv.env
     working_dir: /app
     environment:
       TZ: Europe/Rome
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Rome"
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/vericert?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Rome
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       # Stripe (placeholder: li metterai via .env)
@@ -60,6 +61,8 @@ services:
     volumes:
       - /opt/vericert:/data/vericert
   nginx:
+    env_file:
+      - myenv.env
     image: nginx:1.27-alpine
     container_name: vericert-nginx
     restart: always
