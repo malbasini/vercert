@@ -27,7 +27,7 @@ public class ContactEmailService {
             message.setFrom(fromAddress);
             message.setTo(contactTo);
             message.setReplyTo(form.getEmail());
-            message.setSubject("[Gestiva] Richiesta contatto - " + form.getSubject());
+            message.setSubject("[Vercert] Richiesta contatto - " + form.getSubject());
             message.setText(
                     "Nome: " + form.getName() + "\n" +
                             "Email: " + form.getEmail() + "\n\n" +
