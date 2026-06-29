@@ -2,21 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://app.vercert.org/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
     </url>
     <url>
         <loc>https://app.vercert.org/come-funziona</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://app.vercert.org/docs</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://app.vercert.org/firma-digitale</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://vercert.org/faq</loc>
+        <loc>https://app.vercert.org/faq</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://vercert.org/privacy</loc>
+        <loc>https://app.vercert.org/privacy</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
     </url>
 </urlset>
-
