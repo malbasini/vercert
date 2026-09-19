@@ -11,12 +11,12 @@
   <title th:text="${title}">Vercert</title>
   <meta name="description" th:content="${description}">
   <meta name="robots" th:if="${robots != null}" th:content="${robots}">
-  <!-- Canonical -->
+    <!-- Canonical -->
   <link rel="canonical"
-        th:if="${appBaseUrl != null and !appBaseUrl.isEmpty() and canonicalPath != null}"
-        th:href="${appBaseUrl} + ${canonicalPath}">
+          th:if="${appBaseUrl != null and !appBaseUrl.isEmpty() and canonicalPath != null}"
+          th:href="${appBaseUrl} + ${canonicalPath}">
 
-  <!-- CSS -->
+    <!-- CSS -->
   <link href="/vendor/jsoneditor/jsoneditor/dist/jsoneditor.min.css" rel="stylesheet">
   <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
