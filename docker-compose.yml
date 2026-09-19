@@ -53,7 +53,7 @@ services:
       PAYMENTS_PAYPAL_CLIENT_SECRET: ${PAYMENTS_PAYPAL_CLIENT_SECRET}
       PAYMENTS_PAYPAL_WEBHOOK_ID: ${PAYMENTS_PAYPAL_WEBHOOK_ID}
       # Base URL pubblica (per link nei certificati / QR)
-      APP_PUBLIC_BASE_URL: https://app.vercert.org
+      APP_PUBLIC_BASE_URL: https://vercert.org
       VERCERT_STORAGE_ROOT: /data/vericert
       SPRING_PROFILES_ACTIVE: prod
     networks:
